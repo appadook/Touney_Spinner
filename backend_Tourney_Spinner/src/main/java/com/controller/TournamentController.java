@@ -35,10 +35,24 @@ public class TournamentController {
         return tournamentService.getAllTournaments();
     }
 
-    // Endpoint to create a new tournament with only the name
+    // Define a new class to represent the request body
+    public static class TournamentRequest {
+        private String name;
+
+        // Getter and setter
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
+
     @PostMapping
-    public ResponseEntity<Tournament> createTournament(@RequestBody String name) {
-        Tournament createdTournament = tournamentService.createTournament(name);
+    public ResponseEntity<Tournament> createTournament(@RequestBody TournamentRequest tournamentRequest) {
+        // Use the name property from the request body
+        Tournament createdTournament = tournamentService.createTournament(tournamentRequest.getName());
         return ResponseEntity.status(201).body(createdTournament);
     }
     
