@@ -1,9 +1,12 @@
 package com.model;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Column;
 import jakarta.persistence.Table;
 
@@ -24,6 +27,7 @@ public class Team {
     @Column(name = "player2")
     private String player2;
 
+
     // Default constructor
     public Team() {}
 
@@ -31,6 +35,7 @@ public class Team {
     public Team(String teamName) {
         this.teamName = teamName;
     }
+
 
     // Constructor for setting players without team name
     public Team(String player1, String player2) {

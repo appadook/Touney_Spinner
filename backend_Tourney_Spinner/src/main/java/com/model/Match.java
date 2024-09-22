@@ -29,15 +29,18 @@ public class Match {
 
     @ManyToOne(fetch = FetchType.LAZY)  // Many matches can reference one bracket
     @JoinColumn(name = "bracket_id", nullable = false)
-    private Bracket bracket_id;
+    private Bracket bracket;  // Renamed from bracket_id
 
     @ManyToOne(fetch = FetchType.LAZY)  // Many matches can involve the same team
     @JoinColumn(name = "team_winner_id") 
     private Team winner;
 
-    private String round_name;
+    private String roundName; // Renamed from round_name
 
-    public Match() {}
+    public Match(Team team1, boolean bye) {
+        this.team1 = team1;
+        this.isByeMatch = bye;
+    }
 
     public Match(Team team1, Team team2) {
         this.team1 = team1;
@@ -77,11 +80,11 @@ public class Match {
     }
 
     public Bracket getBracket() {
-        return bracket_id;
+        return bracket;
     }
 
-    public void setBracket(Bracket bracket_id) {
-        this.bracket_id = bracket_id;
+    public void setBracket(Bracket bracket) {
+        this.bracket = bracket;
     }
 
     public Team getWinner() {
@@ -93,11 +96,11 @@ public class Match {
     }
 
     public String getRoundName() {
-        return round_name;
+        return roundName;
     }
 
-    public void setRoundName(String round_name) {
-        this.round_name = round_name;
+    public void setRoundName(String roundName) {
+        this.roundName = roundName;
     }
 
 }
