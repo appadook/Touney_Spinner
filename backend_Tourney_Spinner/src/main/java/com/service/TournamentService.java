@@ -27,7 +27,7 @@ public class TournamentService {
 
     // Create a new tournament
     public Tournament createTournament(String name, List<Team> teams) {
-        Tournament tournament = new Tournament(name, teams);
+        Tournament tournament = new Tournament(name);
         return tournamentRepository.save(tournament);
     }
 
@@ -38,9 +38,7 @@ public class TournamentService {
 
     // Add a new round to the tournament (for both winners' and losers' brackets)
     public Bracket createBracket(Tournament tournament, List<Match> matches, boolean isWinnersBracket) {
-        Bracket bracket = new Bracket(isWinnersBracket ? "Winners Round" : "Losers Round", isWinnersBracket, matches);
-        List<Bracket> brackets = isWinnersBracket ? tournament.getWinnersBrackets() : tournament.getLosersBrackets();
-        brackets.add(bracket);
+        Bracket bracket = new Bracket(isWinnersBracket ? "Winners Round" : "Losers Round", isWinnersBracket);
         return bracketRepository.save(bracket);
     }
 

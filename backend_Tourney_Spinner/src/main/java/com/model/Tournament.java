@@ -1,89 +1,59 @@
 package com.model;
 import jakarta.persistence.*;
 
-import lombok.Getter;
-import org.springframework.data.annotation.Id;
-
-import java.util.List;
-
 @Entity
+@Table(name = "tournaments") // Specify the table name
 public class Tournament {
 
-    @jakarta.persistence.Id
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false) // Ensure the name is not null
     private String name;
+
+    @Column(nullable = false) // Ensure isComplete is not null
     private boolean isComplete;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Team> teams;
-
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Bracket> winnersBrackets;  // List of winner's bracket rounds
-
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Bracket> losersBrackets;   // List of loser's bracket rounds
-
-    public Tournament() {
-    }
-
-    public Tournament(String name, List<Team> teams) {
-        this.name = name;
-        this.teams = teams;
-        this.isComplete = false;
-    }
-
+    // Add getter for id
     public Long getId() {
         return id;
     }
 
+    // Add setter for id (optional, usually not needed)
     public void setId(Long id) {
         this.id = id;
     }
 
+    // Add getter for name
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
+    // Add getter for isComplete
     public boolean isComplete() {
         return isComplete;
     }
 
-    public void setComplete(boolean complete) {
-        isComplete = complete;
+    // Add setter for name
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public List<Team> getTeams() {
-        return teams;
+    // Add setter for isComplete
+    public void setComplete(boolean isComplete) {
+        this.isComplete = isComplete;
     }
 
-    public void setTeams(List<Team> teams) {
-        this.teams = teams;
+    // Default constructor
+    public Tournament() {
     }
 
-    public List<Bracket> getWinnersBrackets() {
-        return winnersBrackets;
+    // Constructor with name
+    public Tournament(String name) {
+        this.name = name;
+        this.isComplete = false;
     }
-
-    public void setWinnersBrackets(List<Bracket> winnersBrackets) {
-        this.winnersBrackets = winnersBrackets;
-    }
-
-    public List<Bracket> getLosersBrackets() {
-        return losersBrackets;
-    }
-
-    public void setLosersBrackets(List<Bracket> losersBrackets) {
-        this.losersBrackets = losersBrackets;
-    }
-
-
 }
 
 

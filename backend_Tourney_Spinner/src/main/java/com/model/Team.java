@@ -3,23 +3,39 @@ package com.model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
-import org.springframework.data.annotation.Id;
-
-
+import jakarta.persistence.Id;
+import jakarta.persistence.Column;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "teams")
 public class Team {
-    @jakarta.persistence.Id
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    @Column(name = "team_name", nullable = false)  // Explicit column annotation
+    private String teamName;
 
+    @Column(name = "player1")
+    private String player1;
+
+    @Column(name = "player2")
+    private String player2;
+
+    // Default constructor
     public Team() {}
 
-    public Team(String name) {
-        this.name = name;
+    // Constructor for setting team name
+    public Team(String teamName) {
+        this.teamName = teamName;
+    }
+
+    // Constructor for setting players without team name
+    public Team(String player1, String player2) {
+        this.player1 = player1;
+        this.player2 = player2;
     }
 
     // Getters and Setters
@@ -32,13 +48,27 @@ public class Team {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getTeamName() {
+        return teamName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTeamName(String teamName) {
+        this.teamName = teamName;
     }
 
+    public String getPlayer1() {
+        return player1;
+    }
 
+    public void setPlayer1(String player1) {
+        this.player1 = player1;
+    }
+
+    public String getPlayer2() {
+        return player2;
+    }
+
+    public void setPlayer2(String player2) {
+        this.player2 = player2;
+    }
 }

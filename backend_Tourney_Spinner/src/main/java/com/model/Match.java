@@ -1,39 +1,48 @@
 package com.model;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import org.springframework.data.annotation.Id;
-
-
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "matches")
 public class Match {
 
-
-    @jakarta.persistence.Id
-    @Id
+    @Id  // Only keep this annotation from jakarta.persistence
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @ManyToOne
+    
+    @ManyToOne(fetch = FetchType.LAZY)  // Many matches can involve the same team
+    @JoinColumn(name = "team1_id")  // Foreign key column in matches table for team1
     private Team team1;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)  // Many matches can involve the same team
+    @JoinColumn(name = "team2_id")  // Foreign key column in matches table for team2
     private Team team2;
 
     private boolean isByeMatch;
 
+    @ManyToOne(fetch = FetchType.LAZY)  // Many matches can reference one bracket
+    @JoinColumn(name = "bracket_id", nullable = false)
+    private Bracket bracket_id;
+
+    @ManyToOne(fetch = FetchType.LAZY)  // Many matches can involve the same team
+    @JoinColumn(name = "team_winner_id") 
+    private Team winner;
+
+    private String round_name;
+
     public Match() {}
 
-    public Match(Team team1, Team team2, boolean isByeMatch) {
+    public Match(Team team1, Team team2) {
         this.team1 = team1;
         this.team2 = team2;
-        this.isByeMatch = isByeMatch;
     }
-
-    // Getters and Setters
 
     public Long getId() {
         return id;
@@ -67,6 +76,28 @@ public class Match {
         this.isByeMatch = isByeMatch;
     }
 
+    public Bracket getBracket() {
+        return bracket_id;
+    }
 
+    public void setBracket(Bracket bracket_id) {
+        this.bracket_id = bracket_id;
+    }
+
+    public Team getWinner() {
+        return winner;
+    }
+
+    public void setWinner(Team winner) {
+        this.winner = winner;
+    }
+
+    public String getRoundName() {
+        return round_name;
+    }
+
+    public void setRoundName(String round_name) {
+        this.round_name = round_name;
+    }
 
 }

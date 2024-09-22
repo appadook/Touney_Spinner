@@ -1,13 +1,12 @@
 package com.model;
 
 import jakarta.persistence.*;
-import org.springframework.data.annotation.Id;
 
-import java.util.List;
+
 
 @Entity
+@Table(name = "brackets")
 public class Bracket {
-    @jakarta.persistence.Id
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -15,18 +14,16 @@ public class Bracket {
     private String roundName;   // E.g., "Quarter-final", "Semi-final"
     private boolean isWinnersBracket;  // To distinguish between winner's and loser's brackets
 
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Match> matches;   // Matches in this round
+    @ManyToOne(fetch = FetchType.LAZY)  // Many brackets can reference one tournament
+    @JoinColumn(name = "tournament_id", nullable = false)
+    private Tournament tournament_id;
 
     public Bracket() {}
 
-    public Bracket(String roundName, boolean isWinnersBracket, List<Match> matches) {
+    public Bracket(String roundName, boolean isWinnersBracket) {
         this.roundName = roundName;
         this.isWinnersBracket = isWinnersBracket;
-        this.matches = matches;
     }
-
-    // Getters and Setters
 
     public Long getId() {
         return id;
@@ -48,17 +45,15 @@ public class Bracket {
         return isWinnersBracket;
     }
 
-    public void setWinnersBracket(boolean isWinnersBracket) {
-        this.isWinnersBracket = isWinnersBracket;
+    public void setWinnersBracket(boolean winnersBracket) {
+        isWinnersBracket = winnersBracket;
     }
 
-    public List<Match> getMatches() {
-        return matches;
+    public Tournament getTournament() {
+        return tournament_id;
     }
 
-    public void setMatches(List<Match> matches) {
-        this.matches = matches;
+    public void setTournament(Tournament tournament) {
+        this.tournament_id = tournament;
     }
-
-
 }
