@@ -26,6 +26,7 @@ public class Bracket {
     public Bracket(String roundName, boolean isWinnersBracket) {
         this.roundName = roundName;
         this.isWinnersBracket = isWinnersBracket;
+     
     }
 
     public Long getId() {

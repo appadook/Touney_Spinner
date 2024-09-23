@@ -23,7 +23,7 @@ public class TournamentController {
         List<Team> fetchedTeams = teams; 
 
         // Generate the first round bracket
-        List<Match> matches = tournamentService.generateFirstRoundBracket(fetchedTeams);
+        List<Match> matches = tournamentService.generateFirstRoundBracket(fetchedTeams, tournamentId);
 
         // Return the generated matches
         return ResponseEntity.ok(matches);
@@ -118,4 +118,19 @@ public class TournamentController {
         return ResponseEntity.noContent().build();  // Return 204 No Content on successful delete
     }
     
+    // Endpoint to get all matches
+    @GetMapping("/matches")
+    public ResponseEntity<List<Match>> getAllMatches() {
+        List<Match> matches = tournamentService.getAllMatches();
+        return ResponseEntity.ok(matches); // Return the matches
+    }
+
+    // Endpoint to delete all brackets and teams
+    @DeleteMapping("/deleteAll")
+    public ResponseEntity<String> clearTournament() {
+        tournamentService.clearTournament();
+        return ResponseEntity.ok("All brackets and teams have been deleted.");
+    }
 }
+
+

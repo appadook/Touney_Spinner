@@ -3,7 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PlusCircle, Trash2, Send } from "lucide-react";
 import './index.css';
-import { createTournament, createTeam, getTeamsInTournament, getAllTeams, deleteTeam } from './services/api'; // Import the API functions
+import { createTournament, createTeam, getTeamsInTournament, getAllTeams, deleteTeam, getAllMatches,
+   deleteAllBracketsAndTeams } from './services/api'; // Import the API functions
 
 
 interface PlayerPair {
@@ -19,6 +20,15 @@ interface Team {
   teamName: string
 }
 
+interface Match {
+  id: number;
+  team1: Team;
+  team2: Team;
+  roundName: string;
+  winner: Team;
+  byeMatch: boolean
+}
+
 export default function App() {
   const [tournamentName, setTournamentName] = useState('');
   const [playerPairs, setPlayerPairs] = useState<PlayerPair[]>([{ player1: '', player2: '', teamName: ''}]);
@@ -26,6 +36,7 @@ export default function App() {
   const [submittingPair, setSubmittingPair] = useState<number | null>(null);
   const [submittedPlayerPairs, setSubmittedPlayerPairs] = useState<Team[]>([]); // State to store submitted player pairs
   const [shouldFetchTeams, setShouldFetchTeams] = useState(false); 
+  const [matches, setMatches] = useState<Match[]>([]);
 
   // Fetch submitted player pairs when the tournament is created
   useEffect(() => {
@@ -42,7 +53,19 @@ export default function App() {
     };
 
     fetchPlayerPairs(); // Fetch player pairs on component mount
-  }, [shouldFetchTeams]); // Empty dependency array to run only on mount
+
+    
+      const fetchMatches = async () => {
+        try {
+          const fetchedMatches = await getAllMatches();
+          setMatches(fetchedMatches); // Set the matches in state
+        } catch (error) {
+          console.error('Failed to fetch matches:', error);
+        }
+      };
+  
+      fetchMatches();
+    }, [shouldFetchTeams]); // Empty dependency array to run only on mount
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); 
@@ -153,6 +176,14 @@ export default function App() {
         </form>
       </div>
 
+      <div>
+        <Button 
+          onClick={deleteAllBracketsAndTeams}
+          >
+            Clear Tourney
+          </Button>
+      </div>
+
       <div className="w-full max-w-2xl p-8 bg-white dark:bg-gray-800 rounded-lg shadow-md">
         <h2 className="text-xl font-bold text-center text-gray-900 dark:text-gray-100 mb-4">
           Player Pairs
@@ -247,6 +278,22 @@ export default function App() {
     })}
   </ul>
       </div>
+      {/* Add a new section for displaying matches */}
+<div className="w-full max-w-md p-8 mt-8 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+  <h2 className="text-xl font-bold text-center text-gray-900 dark:text-gray-100 mb-4">
+    Matches
+  </h2>
+  <ul className="space-y-2">
+    {matches.map((match, index) => (
+      <li key={index} className="flex justify-between items-center p-3 bg-gray-100 dark:bg-gray-700 rounded">
+        <span className="text-gray-900 dark:text-gray-100">
+  {`${match.team1 ? match.team1.teamName : "TBD"} vs ${match.team2 ? match.team2.teamName : "TBD"} - ${match.roundName}`}
+</span>
+
+      </li>
+    ))}
+  </ul>
+</div>
     </div>
   );
 }

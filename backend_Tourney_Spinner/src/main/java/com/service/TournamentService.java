@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.Collections; // Add this import statement
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TournamentService {
@@ -35,12 +36,30 @@ public class TournamentService {
         teamRepository.deleteById(teamId);
     }
 
+    // Method to fetch all matches
+    public List<Match> getAllMatches() {
+        return matchRepository.findAll(); // Use JPA's built-in findAll method
+    }
+
     // Method to generate the first round bracket and save to the database
-    public List<Match> generateFirstRoundBracket(List<Team> teams) {
+    public List<Match> generateFirstRoundBracket(List<Team> teams, Long tournamentId) {
     Collections.shuffle(teams); // Randomly shuffle the teams
     List<Match> matches = new ArrayList<>(); // Single list for both bye and regular matches
+    
+    // Fetch the tournament using findById which returns an Optional<Tournament>
+    Optional<Tournament> tournamentOptional = tournamentRepository.findById(tournamentId);
 
-    Bracket firstRoundBracket = new Bracket("First Round", true); // Create a new bracket
+    // Check if the tournament exists
+    if (!tournamentOptional.isPresent()) {
+        throw new RuntimeException("Tournament not found with ID: " + tournamentId); // Handle not found
+    }
+
+    // Retrieve the Tournament object from the Optional
+    Tournament tournament = tournamentOptional.get();
+
+    // Create a new bracket for the first round
+    Bracket firstRoundBracket = new Bracket("First Round", true); 
+    firstRoundBracket.setTournament(tournament); // Associate the bracket with the tournament
 
     // Persist the bracket first
     firstRoundBracket = bracketRepository.save(firstRoundBracket);
@@ -83,9 +102,65 @@ public class TournamentService {
         }
     }
 
-    return matches; // Return the list of matches (both bye and regular)
-    }   
+    // Automatically generate subsequent rounds
+    generateSubsequentRounds(matches.size(), tournament);
 
+    return matches; // Return the list of matches (both bye and regular)
+    } 
+
+
+
+    // Recursive method to generate subsequent rounds
+    private void generateSubsequentRounds(int numTeams, Tournament tournament) {
+        int currentTeams = numTeams ;  // Teams halve after each round
+        int roundNumber = 2; // Start with second round
+
+        while (currentTeams >= 1) {
+            String roundName = generateRoundName(currentTeams); // Generate round name dynamically
+            Bracket nextRoundBracket = new Bracket(roundName, false);
+            nextRoundBracket.setTournament(tournament);
+            nextRoundBracket = bracketRepository.save(nextRoundBracket);
+
+            // Generate empty matches for the round (teams will be filled when winners advance)
+            for (int i = 0; i < currentTeams / 2; i++) {
+                Match match = new Match(); // Empty match, winner of previous round will fill it later
+                match.setRoundName(nextRoundBracket.getRoundName());
+                match.setBracket(nextRoundBracket);
+                matchRepository.save(match);
+            }
+
+            // Move to the next round
+            currentTeams /= 2;
+            roundNumber++;
+        }
+    }
+
+    // Helper method to generate round names based on remaining teams
+    private String generateRoundName(int teams) {
+        if (teams == 2) {
+            return "Final";
+        } else if (teams == 4) {
+            return "Semi-Final";
+        } else if (teams == 8) {
+            return "Quarter-Final";
+        } else {
+            return "Round of " + teams;
+        }
+    }
+
+
+    // Method to delete all brackets, teams, and matches
+    public void clearTournament() {
+        // First delete all matches to prevent foreign key constraint violations
+        matchRepository.deleteAll();
+        System.out.println("All matches have been deleted.");
+
+        // Then delete all brackets
+        bracketRepository.deleteAll();
+        System.out.println("All brackets have been deleted.");
+
+        
+    }
 
 
     // Retrieve all tournaments

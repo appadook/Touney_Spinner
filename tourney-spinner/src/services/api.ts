@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { log } from 'node:console';
 
 const API_BASE_URL = 'http://localhost:8080/api'; // Base URL for Spring Boot API
 
@@ -75,3 +76,28 @@ export const deleteTeam = async (teamId: number) => {
       throw error;
     }
   };
+
+  // Function to fetch all matches
+export const getAllMatches = async () => {
+    try {
+      const response = await apiClient.get('/tournaments/matches');
+      return response.data; // Return the list of matches
+    } catch (error) {
+      console.error('Error fetching matches:', error);
+      throw error;
+    }
+  };
+
+  // Function to delete all brackets and teams
+export const deleteAllBracketsAndTeams = async () => {
+    try {
+    const response = await apiClient.delete('/tournaments/deleteAll');
+    console.log(`successfully deleted all brackets and teams`);
+    return response.data; // Return the response data
+    
+    } catch (error) {
+    console.error('Error deleting all brackets and teams:', error);
+    throw error;
+    }
+};
+  
