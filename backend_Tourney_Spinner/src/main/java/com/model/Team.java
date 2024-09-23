@@ -7,11 +7,15 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "teams")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Team {
 
     @Id
@@ -38,9 +42,10 @@ public class Team {
 
 
     // Constructor for setting players without team name
-    public Team(String player1, String player2) {
+    public Team(String player1, String player2, String teamName) {
         this.player1 = player1;
         this.player2 = player2;
+        this.teamName = teamName;
     }
 
     // Getters and Setters

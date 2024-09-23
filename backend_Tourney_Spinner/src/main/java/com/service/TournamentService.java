@@ -16,8 +16,7 @@ public class TournamentService {
     private TournamentRepository tournamentRepository;
 
     @Autowired
-    private TeamRepository teamRepository;
-    
+    private TeamRepository teamRepository; // Inject Team repository
 
     @Autowired
     private BracketRepository bracketRepository; // Inject Bracket repository
@@ -25,6 +24,16 @@ public class TournamentService {
     @Autowired
     private MatchRepository matchRepository; // Inject Match repository
 
+
+    // Method to retrieve all teams from the database
+    public List<Team> getAllTeams() {
+        return teamRepository.findAll();
+    }
+
+    // Method to delete a team by its id
+    public void deleteTeam(Long teamId) {
+        teamRepository.deleteById(teamId);
+    }
 
     // Method to generate the first round bracket and save to the database
     public List<Match> generateFirstRoundBracket(List<Team> teams) {
@@ -78,11 +87,6 @@ public class TournamentService {
     }   
 
 
-    // Create a new tournament
-    public Tournament createTournament(String name, List<Team> teams) {
-        Tournament tournament = new Tournament(name);
-        return tournamentRepository.save(tournament);
-    }
 
     // Retrieve all tournaments
     public List<Tournament> getAllTournaments() {
@@ -95,6 +99,34 @@ public class TournamentService {
         return tournamentRepository.save(tournament);
     }
 
-    
+    // Method to create a team from player names
+    public Team createTeam(String player1, String player2, String teamName) {
+        Team team = new Team(player1, player2, teamName); // Assuming Team has a constructor that takes two player names
+        return teamRepository.save(team); // Save the team to the database
+    }
+
+    // Method to get all teams playing in matches for a given tournament
+    public List<Team> getAllTeamsInMatches(Long tournamentId) {
+        Tournament tournament = tournamentRepository.findById(tournamentId)
+            .orElseThrow(() -> new RuntimeException("Tournament not found")); // Fetch tournament
+
+        List<Bracket> brackets = bracketRepository.findByTournament(tournament); // Fetch brackets for the tournament
+        List<Team> teamsInMatches = new ArrayList<>(); // List to hold teams
+
+        for (Bracket bracket : brackets) {
+            List<Match> matches = matchRepository.findByBracket(bracket); // Fetch matches for each bracket
+            for (Match match : matches) {
+                if (match.getTeam1() != null) {
+                    teamsInMatches.add(match.getTeam1()); // Add team1
+                }
+                if (match.getTeam2() != null) {
+                    teamsInMatches.add(match.getTeam2()); // Add team2
+                }
+            }
+        }
+
+        return teamsInMatches; // Return the list of teams
+    }
+
 }
 

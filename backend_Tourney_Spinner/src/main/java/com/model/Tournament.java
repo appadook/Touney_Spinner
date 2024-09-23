@@ -1,8 +1,11 @@
 package com.model;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "tournaments") // Specify the table name
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Tournament {
 
     @Id

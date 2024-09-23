@@ -1,5 +1,7 @@
 package com.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -11,6 +13,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "matches")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Match {
 
     @Id  // Only keep this annotation from jakarta.persistence
@@ -46,6 +49,10 @@ public class Match {
         this.team1 = team1;
         this.team2 = team2;
     }
+
+    // Default constructor
+    public Match() {}
+
 
     public Long getId() {
         return id;

@@ -1,11 +1,14 @@
 package com.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.*;
 
 
 
 @Entity
 @Table(name = "brackets")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Bracket {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,7 +19,7 @@ public class Bracket {
 
     @ManyToOne(fetch = FetchType.LAZY)  // Many brackets can reference one tournament
     @JoinColumn(name = "tournament_id", nullable = false)
-    private Tournament tournament_id;
+    private Tournament tournament;
 
     public Bracket() {}
 
@@ -50,10 +53,10 @@ public class Bracket {
     }
 
     public Tournament getTournament() {
-        return tournament_id;
+        return tournament;
     }
 
     public void setTournament(Tournament tournament) {
-        this.tournament_id = tournament;
+        this.tournament = tournament;
     }
 }
